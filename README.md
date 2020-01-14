@@ -18,7 +18,7 @@ CHEN, Xu; YU, Kunjie. Hybridizing cuckoo search algorithm with biogeography-base
 - [Anaconda Distribution (Python 3.x Version)](https://www.anaconda.com/distribution/)
 
 ### IDE (Opcional)
-- [Visual Stuido Code](https://code.visualstudio.com/)
+- [Visual Studio Code](https://code.visualstudio.com/)
 
 
 ****Instituto de Física e Química****
