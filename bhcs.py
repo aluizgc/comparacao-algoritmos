@@ -48,7 +48,7 @@ def Penalty(sol):
 results = np.zeros((runs,dimension))
 costs = np.zeros((runs,40))
 for run in range(runs):
-    data = np.loadtxt('curva_0.txt')
+    data = np.loadtxt('curve_0.txt')
     voltage = data[:, 0]
     current = data[:, 1]
     
