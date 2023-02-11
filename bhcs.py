@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 10 19:54:19 2019
-
-@author: adhimarflavio
-"""
 import numpy as np
 from scipy.special import gamma
 
