@@ -1,3 +1,9 @@
+'''
+Hybridizing cuckoo search algorithm with biogeography-based optimization
+
+Author: aluizgc
+'''
+
 import numpy as np
 from scipy.special import gamma
 
@@ -10,38 +16,28 @@ delta = 1.6
 I = 1.   # maximum imigration
 E = 1.   # imigration rate
 maxFES = 2000
-#FES = 0
 runs = 10
-#run = 0
-
-
 
 lbound = np.array([0.0, 0.0, 0.0, 1.0, 0.0])  # I_ph I_0 R_s n R_sh
 ubound = np.array([1.0, 1e-6, 0.5, 2.0, 100.0])
 dimension = len(lbound)
+
 # Compute migration rates, assuming the population is sorted from most fit to least fit
 mu = E*((NP-(np.arange(NP)+1.))/NP)  # emigration rate
 lambdaa = I*(1. - mu)  # immigration rate
-# --- Define constants and import data --- #
 
+# --- Define constants and import data --- #
 charge = 1.6021766e-19
 boltz = 1.38065e-23
 temperature = 33 + 273.15  # in Kelvin
 
-#data = np.loadtxt('BHCS Adhimar/curva_0.txt')
-#voltage = data[:, 0]
-#current = data[:, 1]
-
 # --- Define objective function (RMSE) --- #
-
-
 def objective(indv):
     simulated = indv[0]-indv[1]*(np.exp(charge*(voltage+current*indv[2])/(
         indv[3]*boltz*temperature), dtype=np.float64)-1)-(voltage+current*indv[2])/indv[4]
     return np.power((1/np.float(np.size(voltage)))*np.sum(np.power(current-simulated, 2, dtype=np.float64), dtype=np.float64), 0.5, dtype=np.float64)
+
 # --- Penalty function --- #
-
-
 def Penalty(sol):
     for j in range(dimension):
         if sol[j] > ubound[j]:
@@ -52,12 +48,10 @@ def Penalty(sol):
 results = np.zeros((runs,dimension))
 costs = np.zeros((runs,40))
 for run in range(runs):
-    #data = np.loadtxt('Melhores medidas/{}.txt'.format(run))
     data = np.loadtxt('curva_0.txt')
     voltage = data[:, 0]
     current = data[:, 1]
-    #results = np.zeros((runs,dimension))
-    #costs = np.zeros((runs,50))
+    
     # Random initial solutions
     nest = lbound+np.random.rand(NP, dimension)*(ubound-lbound)
     fit_nest = np.zeros(NP)
@@ -95,6 +89,7 @@ for run in range(runs):
                 nest[i, :] = nest_new[i, :]
         fmin, index = np.min(fit_nest), np.argmin(fit_nest)
         bNest = nest[index, :]
+    
     # Biogeography-based discovery operator
         sort = np.argsort(fit_nest)
         fit_nest = fit_nest[sort]
@@ -105,10 +100,10 @@ for run in range(runs):
                     pp = mu/np.sum(mu)
                     cum_pp = np.cumsum(pp)
                     SelectIndex = np.where(np.random.rand() < cum_pp)
-                    # print("SelectIndex",SelectIndex[0][0])
                     while (SelectIndex[0][0] == i):
                         SelectIndex = np.where(np.random.rand() < cum_pp)
                     Alpha = alpha  # np.random.rand()
+                    
                     # migration step
                     nest_new[i, j] = Alpha*nest[i, j] + \
                         (1.-Alpha)*nest[SelectIndex[0][0], j]
@@ -119,7 +114,6 @@ for run in range(runs):
             nest_new[i, :] = Penalty(nest_new[i, :])
             fit_nest_new[i] = objective(nest_new[i, :])
             if (fit_nest_new[i] < fit_nest[i]):
-                # print("ok")
                 fit_nest[i] = fit_nest_new[i]
                 nest[i, :] = nest_new[i, :]
         fmin, index = np.min(fit_nest), np.argmin(fit_nest)
@@ -133,5 +127,3 @@ for run in range(runs):
     results[run] = nest[0,:]
     np.savetxt('BHCSrun.txt', results, delimiter= ' ')
     np.savetxt('BHCScosts.txt',costs)    
-
-
